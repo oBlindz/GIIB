@@ -15,13 +15,16 @@ def processing_match_stats(name, kills, assists, deaths, rounds_win, rounds_lose
     kpr     = round(kills/(rounds_win+rounds_lose),2)
     rating  = round(((kdr*0.5)+(kpr-dpr))/(rounds_win+rounds_lose),2)
 
-def insert_text_in_image(imagePath, text):
+    insert_text_in_image("./image/image.png",name)
+
+def insert_text_in_image(imagePath, nickname):
     with Image.open(imagePath) as im:
         draw    = ImageDraw.Draw(im)
-        draw.text((540//2,40),text,fill=(0,0,0))
-        im.save("drawed_image.jpg")
+
+        draw.text((1536//2,200),nickname,font=font,fill=(255,255,255))
+
+        im.save("./out/image.png")
         im.show()
 
-#receive_inputs_from_terminal()
-insert_text_in_image("./Images/image.jpg", "Hello World!")
-# Image size: 540, 540
+receive_inputs_from_terminal()
+# Image size:1536,2048
