@@ -9,7 +9,7 @@ def receive_inputs_from_terminal():
     points      = int(input("Insert your points: "))
     rounds_win  = int(input("Insert your rounds win: "))
     rounds_lose = int(input("Insert your rounds lose: "))
-    processing_match_stats(name,kills,assists,deaths,points,rounds_win,rounds_lose)
+    processing_match_stats(name.upper(),kills,assists,deaths,points,rounds_win,rounds_lose)
 
 def processing_match_stats(name,kills,assists,deaths,points,rounds_win,rounds_lose):
     image_path  = "./image/image.png"
@@ -17,7 +17,8 @@ def processing_match_stats(name,kills,assists,deaths,points,rounds_win,rounds_lo
     kdr     = round(kills/deaths,2)
     dpr     = round(deaths/(rounds_win+rounds_lose),2)
     kpr     = round(kills/(rounds_win+rounds_lose),2)
-    rating  = round((2),2)
+    diff    = kills - deaths
+    rating  = round((((diff+assists*0.5+points)/2+(kpr-dpr))/(rounds_win+rounds_lose)),2)
     
     insert_text_in_image(image_path,name,kdr,kpr,dpr,rating)
 
