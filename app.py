@@ -1,7 +1,12 @@
 # Image size: 1536px, 2048px
 from PIL import Image, ImageDraw, ImageFont 
+import html
 
 class NegativeNumberError(Exception):
+    pass
+class NotANumberError(Exception):
+    pass
+class TooLargeNickname(Exception):
     pass
 
 def receive_inputs_from_terminal():
@@ -14,12 +19,27 @@ def receive_inputs_from_terminal():
     rounds_lose = int(input("Insert your rounds lose: "))
     processing_match_stats(name.upper(),kills,assists,deaths,points,rounds_win,rounds_lose)
 
-def processing_match_stats(name,kills,assists,deaths,points,rounds_win,rounds_lose):
+def sanitizate_inputs(target):
+    trim_value  = target.strip()
+    value       = html.escape(trim_value)
+    return value
+
+def processing_match_stats(dirt_name,kills,assists,deaths,points,rounds_win,rounds_lose):
     image_path  = "./image/image.png"
+    stats       = [kills,assists,deaths,points,rounds_win,rounds_lose]
+    name        = sanitizate_inputs(dirt_name)
 
     try:
         if (kills<0 or assists<0 or deaths<0 or points<0 or rounds_win<0 or rounds_lose<0):
             raise NegativeNumberError("The number should be greater than 0")
+
+        for index in range(len(stats)):
+            index_validation    = stats[index]
+            if not isinstance(index_validation,(int,float)):
+                raise NotANumberError("The statistics should be a number (int or float)")
+
+        if len(name) > 10:
+            raise TooLargeNickname("The nickname should be less than 10 characteres")
 
         kdr     = round(kills/deaths,2)
         dpr     = round(deaths/(rounds_win+rounds_lose),2)
@@ -28,7 +48,7 @@ def processing_match_stats(name,kills,assists,deaths,points,rounds_win,rounds_lo
         rating  = round((((diff+assists*0.5+points)/2+(kpr-dpr))/(rounds_win+rounds_lose)),2)
     
         insert_text_in_image(image_path,name,kdr,kpr,dpr,rating)
-    except NegativeNumberError as event:
+    except (NegativeNumberError,NotANumberError,TooLargeNickname) as event:
         print(f"Error: {event}")
 
 def insert_text_in_image(image_path,nickname,kdr,kpr,dpr,rtg):
